@@ -15,11 +15,6 @@ public class Server {
     public Server() {
         try {
             System.out.println("正在启动服务端...");
-            /*
-                如果执行下面代码出现异常:
-                java.net.BindException:address already in use
-                原因是申请的8088端口已经被系统其它程序占用了.
-             */
             serverSocket = new ServerSocket(8088);
             System.out.println("服务端启动完毕!");
         } catch (IOException e) {
@@ -30,14 +25,12 @@ public class Server {
     public void start() {
         try {
             while (true) {
-                System.out.println("等待客户端连接...");
+                //System.out.println("等待客户端连接...");
                 Socket socket = serverSocket.accept();//阻塞方法
-                System.out.println("一个客户端连接了!");
-                //启动一个线程负责处理该客户的交互
-                //通过刚接受连接的socket,获取输入流来读取该客户端发送过来的消息
-//                ClientHandler与Runnable都可以 只是先声明一个类型
+                //System.out.println("一个客户端连接了!");
+
                 Runnable handler = new ClientHandler(socket);
-                Thread t = new Thread(handler);//建立多次线程
+                Thread t = new Thread(handler);
                 t.start();
             }
         } catch (IOException e) {
@@ -56,7 +49,6 @@ public class Server {
  
         public ClientHandler(Socket socket) {//获取插件 定义属性
             this.socket = socket;
-            //通过socket来获取远端计算机的ip地址
             host = socket.getInetAddress().getHostAddress();
         }
  
@@ -69,7 +61,7 @@ public class Server {
                 String line;
  
                 while ((line = br.readLine()) != null) {
-                    System.out.println(host+" 说: " + line);
+                    System.out.println("receive msg: " + line + "from "+ host);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
